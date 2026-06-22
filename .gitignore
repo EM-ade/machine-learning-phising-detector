@@ -1,0 +1,26 @@
+# Generated data (regenerate on Render build)
+data/combined_dataset.csv
+
+# Generated model
+models/rf_classifier.pkl
+models/tfidf_vectorizer.pkl
+
+# Database
+phishing_detector.db
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+venv/

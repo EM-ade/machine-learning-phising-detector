@@ -1,0 +1,30 @@
+{
+  "model_version": "1.0.0",
+  "test_samples": 9000,
+  "confusion_matrix": {
+    "true_neg": 4436,
+    "false_pos": 34,
+    "false_neg": 37,
+    "true_pos": 4493
+  },
+  "classification_report": {
+    "legitimate": {
+      "precision": 0.9917281466577241,
+      "recall": 0.992393736017897,
+      "f1": 0.9920608296992061,
+      "support": 4470
+    },
+    "phishing": {
+      "precision": 0.9924895074000442,
+      "recall": 0.9918322295805739,
+      "f1": 0.9921607596334328,
+      "support": 4530
+    },
+    "accuracy": 0.9921111111111112,
+    "macro_avg": {
+      "precision": 0.9921088270288841,
+      "recall": 0.9921129827992354,
+      "f1": 0.9921107946663195
+    }
+  }
+}

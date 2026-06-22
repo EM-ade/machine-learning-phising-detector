@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhishGuard — Email Classification System</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <rect width="36" height="36" rx="10" fill="currentColor" opacity="0.15"/>
+          <path d="M18 8l10 6v12a2 2 0 01-2 2H10a2 2 0 01-2-2V14l10-6z" stroke="currentColor" stroke-width="2" fill="none"/>
+          <path d="M18 20l-6-4m6 4l6-4m-6 4v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <h1>PhishGuard</h1>
+      </div>
+      <p class="subtitle">Machine Learning-Based Phishing Email Classification</p>
+    </header>
+
+    <main>
+      <section class="input-section">
+        <label for="email-text">Paste email content below for analysis:</label>
+        <textarea id="email-text" placeholder="Paste the suspicious email content here..." rows="10"></textarea>
+        <div class="input-controls">
+          <div class="char-count"><span id="char-count">0</span> / 50,000</div>
+          <div class="btn-group">
+            <button id="btn-clear" class="btn btn-outline">Clear</button>
+            <button id="btn-analyze" class="btn btn-primary" disabled>Analyze</button>
+          </div>
+        </div>
+      </section>
+
+      <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>Analyzing email content...</p>
+      </div>
+
+      <section id="result" class="result-section hidden">
+        <div class="result-card">
+          <div class="result-header">
+            <div class="result-icon">
+              <svg class="icon-shield" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <path d="M24 4L8 12v12c0 13.23 16 20 16 20s16-6.77 16-20V12L24 4z" stroke="currentColor" stroke-width="2.5" fill="none"/>
+                <path class="check-path" d="M16 24l5.33 5.33L32 18" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </div>
+            <div class="result-label-group">
+              <span id="result-label" class="result-label">PHISHING</span>
+              <span id="result-sub" class="result-sub">Suspicious email detected</span>
+            </div>
+            <button id="btn-new" class="btn btn-sm btn-outline">New Analysis</button>
+          </div>
+
+          <div class="confidence-row">
+            <span class="confidence-label">Confidence</span>
+            <div class="confidence-bar-track">
+              <div id="confidence-bar" class="confidence-bar" style="width: 0%"></div>
+            </div>
+            <span id="confidence-value" class="confidence-value">0%</span>
+          </div>
+
+          <div class="indicators-row">
+            <span class="indicators-label">Indicators detected:</span>
+            <ul id="indicators-list" class="indicators-list"></ul>
+          </div>
+
+          <div class="meta-row">
+            <span>Processed in <strong id="processing-time">0</strong>ms</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="history" class="history-section">
+        <div class="section-header">
+          <h2>Recent Analyses</h2>
+          <button id="btn-refresh" class="btn btn-sm btn-ghost">Refresh</button>
+        </div>
+        <div class="history-table-wrap">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Result</th>
+                <th>Confidence</th>
+                <th>Time (ms)</th>
+              </tr>
+            </thead>
+            <tbody id="history-body">
+              <tr><td colspan="4" class="empty-msg">No analyses yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="metrics-toggle">
+        <button id="btn-metrics" class="btn btn-outline metrics-btn">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:6px">
+            <path d="M2 13V3h3l2 5 2-5h3v10h-2.5V6.5L9 11H7L5.5 6.5V13H2z" fill="currentColor"/>
+          </svg>
+          View Model Metrics
+        </button>
+      </div>
+
+      <section id="metrics-section" class="metrics-section hidden">
+        <div class="section-header">
+          <h2>Model Evaluation Metrics</h2>
+          <button id="btn-close-metrics" class="btn btn-sm btn-ghost">Close</button>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-value" id="m-accuracy">—</div>
+            <div class="metric-name">Accuracy</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value" id="m-precision">—</div>
+            <div class="metric-name">Precision</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value" id="m-recall">—</div>
+            <div class="metric-name">Recall</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value" id="m-f1">—</div>
+            <div class="metric-name">F1 Score</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value" id="m-auc">—</div>
+            <div class="metric-name">ROC AUC</div>
+          </div>
+        </div>
+
+        <div class="cm-section">
+          <h3>Confusion Matrix</h3>
+          <div class="cm-wrap">
+            <div class="cm-corner"></div>
+            <div class="cm-col-label">Predicted Legit</div>
+            <div class="cm-col-label">Predicted Phish</div>
+
+            <div class="cm-row-label">Actual Legit</div>
+            <div class="cm-cell cm-tn" id="cm-tn">—</div>
+            <div class="cm-cell cm-fp" id="cm-fp">—</div>
+
+            <div class="cm-row-label">Actual Phish</div>
+            <div class="cm-cell cm-fn" id="cm-fn">—</div>
+            <div class="cm-cell cm-tp" id="cm-tp">—</div>
+          </div>
+          <p class="cm-meta">Test samples: <span id="cm-samples">—</span> | Model version: <span id="cm-version">—</span></p>
+        </div>
+
+        <div class="metrics-loading hidden" id="metrics-loading">
+          <div class="spinner"></div>
+          <p>Loading evaluation data...</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>PhishGuard v1.0 | Cybersecurity Research Project | Chrisland University, 2026</p>
+    </footer>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

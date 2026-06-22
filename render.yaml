@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: phishguard
+    env: python
+    buildCommand: pip install -r requirements.txt && python data_loader.py && python -u train.py
+    startCommand: gunicorn -w 2 -b 0.0.0.0:$PORT app:app
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
