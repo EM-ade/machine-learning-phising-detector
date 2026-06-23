@@ -3,7 +3,7 @@ services:
     name: phishguard
     env: python
     pythonVersion: "3.11"
-    buildCommand: pip install -r requirements.txt && python data_loader.py && python -u train.py
+    buildCommand: pip install -r requirements.txt && python -c "import nltk; nltk.download('wordnet'); nltk.download('punkt_tab'); nltk.download('stopwords')" && python data_loader.py && python -u train.py
     startCommand: gunicorn -w 2 -b 0.0.0.0:$PORT app:app
     autoDeploy: true
     healthCheckPath: /health
