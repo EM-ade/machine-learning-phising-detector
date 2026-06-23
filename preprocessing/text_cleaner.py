@@ -6,7 +6,7 @@ from nltk.stem import WordNetLemmatizer
 nltk.download("stopwords", quiet=True)
 nltk.download("wordnet", quiet=True)
 nltk.download("omw-1.4", quiet=True)
-nltk.download("punkt_tab", quiet=True)
+nltk.download("punkt", quiet=True)
 
 STOPWORDS = set(stopwords.words("english"))
 LEMMATIZER = WordNetLemmatizer()
