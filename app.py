@@ -1,3 +1,8 @@
+import nltk
+nltk.download("wordnet", quiet=True)
+nltk.download("punkt_tab", quiet=True)
+nltk.download("stopwords", quiet=True)
+
 from flask import Flask, render_template, request
 from routes.api import api_bp, load_model_globals
 from database.db import init_db
