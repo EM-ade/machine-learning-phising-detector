@@ -1,10 +1,6 @@
 # Generated data (regenerate on Render build)
 data/combined_dataset.csv
 
-# Generated model
-models/rf_classifier.pkl
-models/tfidf_vectorizer.pkl
-
 # Database
 phishing_detector.db
 
