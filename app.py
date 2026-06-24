@@ -1,4 +1,6 @@
 import nltk
+import os
+import sys
 
 nltk.download("wordnet", quiet=True)
 nltk.download("punkt", quiet=True)
@@ -13,6 +15,15 @@ app = Flask(__name__)
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 3600
 
 app.register_blueprint(api_bp)
+
+init_db()
+
+try:
+    from config import MODELS_DIR
+    if os.path.exists(os.path.join(MODELS_DIR, "tfidf_vectorizer.pkl")):
+        load_model_globals()
+except Exception as e:
+    print(f"[WARN] Model files not found: {e}", file=sys.stderr)
 
 
 @app.after_request
