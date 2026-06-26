@@ -82,9 +82,17 @@
     const isPhishing = data.is_phishing;
     resultCard.className = "result-card " + (isPhishing ? "phishing" : "legitimate");
     resultLabel.textContent = isPhishing ? "PHISHING" : "LEGITIMATE";
-    resultSub.textContent = isPhishing
+
+    let sub = isPhishing
       ? "This email contains suspicious patterns"
       : "This email appears to be legitimate";
+    if (data.low_confidence) {
+      sub += " — Low confidence prediction";
+    }
+    if (data.rule_override) {
+      sub += " (flagged by rule check)";
+    }
+    resultSub.textContent = sub;
 
     const conf = data.confidence;
     confidenceBar.style.width = conf + "%";

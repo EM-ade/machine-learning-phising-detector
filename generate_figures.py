@@ -580,9 +580,13 @@ def generate_evaluation_report():
     cm = confusion_matrix(y_test, y_pred)
     report = classification_report(y_test, y_pred, target_names=["Legitimate", "Phishing"], output_dict=True)
 
+    from sklearn.metrics import roc_auc_score
+    roc_auc = roc_auc_score(y_test, y_prob)
+
     report_data = {
         "model_version": config.MODEL_VERSION,
         "test_samples": len(y_test),
+        "roc_auc": roc_auc,
         "confusion_matrix": {
             "true_neg": int(cm[0, 0]),
             "false_pos": int(cm[0, 1]),

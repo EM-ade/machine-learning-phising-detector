@@ -35,6 +35,20 @@ def extract_indicators(text, feature_names, importances, threshold=0.02):
     return found[:6] if found else ["Standard email pattern"]
 
 
+HIGH_RISK_PATTERNS = [
+    "won", "prize", "lottery", "winner", "congratulation",
+    "bank details", "send money", "claim your", "free gift",
+    "you have been selected", "click here", "verify your account",
+    "suspend", "limited", "action required",
+]
+
+
+def rule_based_check(text):
+    text_lower = text.lower()
+    matches = [p for p in HIGH_RISK_PATTERNS if p in text_lower]
+    return len(matches) >= 2
+
+
 @api_bp.route("/predict", methods=["POST"])
 def predict():
     data = request.get_json(silent=True)
@@ -63,6 +77,15 @@ def predict():
     confidence = float(max(proba) * 100)
     label = "Phishing" if is_phishing else "Legitimate"
 
+    rule_override = False
+    if not is_phishing and confidence < 70 and rule_based_check(email_text):
+        is_phishing = True
+        label = "Phishing"
+        confidence = max(confidence, 65.0)
+        rule_override = True
+
+    low_confidence = 50 <= confidence < 70
+
     indicators = extract_indicators(email_text, [], [])
 
     processing_time_ms = round((time.time() - t0) * 1000, 2)
@@ -73,6 +96,8 @@ def predict():
         "prediction": label,
         "confidence": round(confidence, 2),
         "is_phishing": is_phishing,
+        "low_confidence": low_confidence,
+        "rule_override": rule_override,
         "indicators": indicators,
         "processing_time_ms": processing_time_ms,
     })
