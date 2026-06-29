@@ -206,21 +206,12 @@
       }
       var data = await res.json();
       var cr = data.classification_report || {};
-      var cm = data.confusion_matrix || {};
 
       document.getElementById("m-accuracy").textContent = (cr.accuracy * 100).toFixed(1) + "%";
       document.getElementById("m-precision").textContent = (cr.macro_avg ? cr.macro_avg.precision : 0).toFixed(2);
       document.getElementById("m-recall").textContent = (cr.macro_avg ? cr.macro_avg.recall : 0).toFixed(2);
       document.getElementById("m-f1").textContent = (cr.macro_avg ? cr.macro_avg["f1"] : 0).toFixed(2);
       document.getElementById("m-auc").textContent = data.roc_auc ? data.roc_auc.toFixed(4) : "—";
-
-      document.getElementById("cm-tn").textContent = cm.true_neg !== undefined ? cm.true_neg.toLocaleString() : "—";
-      document.getElementById("cm-fp").textContent = cm.false_pos !== undefined ? cm.false_pos.toLocaleString() : "—";
-      document.getElementById("cm-fn").textContent = cm.false_neg !== undefined ? cm.false_neg.toLocaleString() : "—";
-      document.getElementById("cm-tp").textContent = cm.true_pos !== undefined ? cm.true_pos.toLocaleString() : "—";
-
-      document.getElementById("cm-samples").textContent = data.test_samples ? data.test_samples.toLocaleString() : "—";
-      document.getElementById("cm-version").textContent = data.model_version || "—";
 
       metricsFetched = true;
     } catch (e) {
